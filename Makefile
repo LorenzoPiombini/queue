@@ -26,24 +26,19 @@ clean:
 	rm $(SHAREDLIBque)
 
 $(TARGET) : $(OBJ)
-	sudo gcc -o $@ $? -fsanitize=address -fpie -pie -z relro -z now -z noexecstack
+	gcc -o $@ $? -fsanitize=address -fpie -pie -z relro -z now -z noexecstack
 
 
 obj/%.o:src/%.c
-	sudo gcc -Wall -g3 -c $< -o $@ -Iinclude -fstack-protector-strong  -D_FORTIFY_SOURCE=2 -fpie -fPIE -pie -fsanitize=address
+	 gcc -Wall -g3 -c $< -o $@ -Iinclude -fstack-protector-strong  -D_FORTIFY_SOURCE=2 -fpie -fPIE -pie -fsanitize=address
 
-$(TARGET) : $(OBJ_PROD)
+
+
+$(TARGET)_prod: $(OBJ_PROD)
 	sudo gcc -o $@ $? -fpie -pie -z relro -z now -z noexecstack
 
 obj/%_prod.o:src/%.c
 	sudo gcc -Wall -c $< -o $@ -Iinclude -fstack-protector-strong  -D_FORTIFY_SOURCE=2 -fpie -fPIE -pie
-
-$(TARGET) : $(OBJ)
-	sudo gcc -o $@ $? -fsanitize=address -fpie -pie -z relro -z now -z noexecstack
-
-
-obj/%.o:src/%.c
-	sudo gcc -Wall -g3 -c $< -o $@ -Iinclude -fstack-protector-strong  -D_FORTIFY_SOURCE=2 -fpie -fPIE -pie -fsanitize=address
 
 install:
 	install -d $(INCLUDEDIR)                                                                                  

@@ -5,18 +5,16 @@
 
 
 
-unsigned char q_init(Queue* q)
+unsigned char q_init(struct Queue* q)
 {
-	(*q).front = calloc(1,sizeof(Node_q));
-	if(!(*q).front)
-	{
+	(*q).front = calloc(1,sizeof(struct Node_q));
+	if(!(*q).front) {
 		printf("calloc failed %s:%d.\n",__FILE__,__LINE__-3);
 		return 0;
 	}
 
-	(*q).back = calloc(1,sizeof(Node_q));
-	if(!(*q).back)
-	{
+	(*q).back = calloc(1,sizeof(struct Node_q));
+	if(!(*q).back) {
 		printf("calloc failed %s:%d.\n",__FILE__,__LINE__-3);
 		return 0;
 	}
@@ -26,36 +24,35 @@ unsigned char q_init(Queue* q)
 	(*q).length = 0;
 	return 1;
 }
-unsigned char is_full(Queue* q)
+
+unsigned char is_full(struct Queue* q)
 {
 	if((*q).length == MAX_SIZE) return 1;
 
 	return 0;
 }
 
-unsigned char is_empty(Queue* q)
+unsigned char is_empty(struct Queue* q)
 {
 	if((*q).length == 0) return 1;
 
 	return 0;
 }
 
-unsigned char enqueue(Queue* q, void* value)
+unsigned char enqueue(struct Queue* q, void* value)
 {
 	if(is_full(q)) return 0;
 
-	Node_q* new_node = calloc(1,sizeof(Node_q));
-	if(!new_node)
-	{
+	struct Node_q* new_node = calloc(1,sizeof(struct Node_q));
+	if(!new_node) {
 		printf("calloc failed %s:%d.\n",__FILE__,__LINE__-3);
 		return 0;
 	}
-
+	
 	new_node->value = value;
 	new_node->next = NULL;
 
-	if((*q).length == 0)
-	{
+	if((*q).length == 0) {
 		(*q).front->next = new_node;
 		(*q).back->next = new_node;
 		(*q).length++;
@@ -63,19 +60,18 @@ unsigned char enqueue(Queue* q, void* value)
 	}
 
 	(*q).back->next->next = new_node;
-	Node_q* temp = (*q).back->next->next;
+	struct Node_q* temp = (*q).back->next->next;
 	(*q).back->next = temp;
 	(*q).length++;
 	return 1;
 
 }
 
-unsigned char dequeue(Queue* q)
+unsigned char dequeue(struct Queue* q)
 {
 	if(is_empty(q)) return 0;
 	
-	if((*q).length == 1)
-	{
+	if((*q).length == 1) {
 		free((*q).front->next);
 		(*q).front->next = NULL;
 		(*q).back->next = NULL;
@@ -83,7 +79,7 @@ unsigned char dequeue(Queue* q)
 		return 1;
 	}
 
-	Node_q* temp = (*q).front->next->next;
+	struct Node_q* temp = (*q).front->next->next;
 	free((*q).front->next);
 	(*q).front->next = NULL;
 	(*q).front->next = temp;
@@ -93,18 +89,10 @@ unsigned char dequeue(Queue* q)
 }
 
 
-void q_free(Queue* q)
+void q_free(struct Queue* q)
 {
-	if(is_empty(q)) return;
 
-	while((*q).length > 0)
-	{
-		Node_q* temp = (*q).front->next->next;
-		free((*q).front->next);
-		(*q).front->next = NULL;
-		(*q).front->next = temp;
-		(*q).length--;
-	}
+	while(dequeue(q));
 
 	free((*q).front);
 	free((*q).back);
